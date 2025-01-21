@@ -1,9 +1,20 @@
 FROM node:14.20.0
 
 # install chrome for protractor tests
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-RUN apt-get update && apt-get install -yq google-chrome-stable
+# RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+# RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+# 切换为阿里云镜像源
+RUN sed -i 's|^deb http://.*debian.org/debian|deb https://mirrors.aliyun.com/debian|g' /etc/apt/sources.list
+
+# 安装依赖并下载、安装指定的 .deb 包
+RUN apt-get update && \
+    apt-get install -yq \
+        wget \
+        && wget https://repo.debiancn.org/debiancn/pool/main/g/google-chrome-stable/google-chrome-stable_132.0.6834.83-1_amd64.deb \
+        && apt-get install -yq ./google-chrome-stable_132.0.6834.83-1_amd64.deb \
+        && rm google-chrome-stable_132.0.6834.83-1_amd64.deb \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /code
 
