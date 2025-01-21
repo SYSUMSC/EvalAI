@@ -26,6 +26,8 @@ ADD ./.eslintrc /code
 ADD ./karma.conf.js /code
 
 # Install Prerequisites
+# 设置 npm 镜像源为淘宝镜像
+RUN npm config set registry https://registry.npmmirror.com
 RUN npm install -g bower gulp gulp-cli
 
 RUN npm link gulp

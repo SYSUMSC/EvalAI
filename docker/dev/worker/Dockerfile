@@ -1,7 +1,12 @@
 FROM python:3.7.5
 
 ENV PYTHONUNBUFFERED 1
-
+# 切换为阿里云镜像源
+RUN sed -i 's|^deb http://.*debian.org/debian|deb https://mirrors.aliyun.com/debian|g' /etc/apt/sources.list
+# 创建 pip 配置文件并设置清华源
+RUN mkdir -p /root/.pip && \
+    echo "[global]" > /root/.pip/pip.conf && \
+    echo "index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf
 RUN apt-get update && \
   apt-get install -q -y default-jre default-jdk && \
   rm -rf /var/lib/apt/lists/*
@@ -10,6 +15,10 @@ RUN mkdir /code
 WORKDIR /code
 
 ADD requirements/* /code/
+# 创建 pip 配置文件并设置清华源
+RUN mkdir -p /root/.pip && \
+    echo "[global]" > /root/.pip/pip.conf && \
+    echo "index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf
 
 RUN pip install -U cffi service_identity cython==0.29 numpy==1.14.5
 RUN pip install -r dev.txt
