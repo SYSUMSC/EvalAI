@@ -4,12 +4,16 @@ services:
     image: postgres:10.4
     ports:
       - "5432:5432"
+    networks:
+      - evalai
 
   sqs:
     image: softwaremill/elasticmq
     hostname: sqs
     ports:
       - 9324:9324
+    networks:
+      - evalai
 
   django:
     hostname: django
@@ -26,6 +30,8 @@ services:
       - statsd-exporter
     volumes:
       - .:/code
+    networks:
+      - evalai
 
   worker:
     env_file:
@@ -37,6 +43,8 @@ services:
       - django
     volumes:
       - .:/code
+    networks:
+      - evalai
 
   worker_py3_8:
     env_file:
@@ -48,6 +56,8 @@ services:
       - django
     volumes:
       - .:/code
+    networks:
+      - evalai
 
   nodejs:
     hostname: nodejs
@@ -63,6 +73,8 @@ services:
       - .:/code
       - /code/node_modules
       - /code/bower_components
+    networks:
+      - evalai
 
   statsd-exporter:
     hostname: statsd
@@ -73,3 +85,9 @@ services:
     ports:
       - '9125:9125'
       - '9102:9102'
+    networks:
+      - evalai
+
+networks:
+  evalai:
+    driver: bridge
